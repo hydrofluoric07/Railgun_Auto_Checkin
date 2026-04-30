@@ -1,21 +1,58 @@
-name: run
+name: GLaDOS Auto Checkin
 
 on:
   workflow_dispatch:
   push:
   schedule:
-    - cron: 10 16 * * *
+    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 18
-      - run: npm ci
-      - run: npm run main
+      - id: checkin-meta
+        shell: bash
+        run: |
+          date_key="$(TZ=Asia/Shanghai date +%F)"
+          marker_path="$RUNNER_TEMP/checkin-marker/$date_key.json"
+          echo "date_key=$date_key" >> "$GITHUB_OUTPUT"
+          echo "marker_path=$marker_path" >> "$GITHUB_OUTPUT"
+      - id: checkin-cache
+        if: ${{ github.event_name == 'schedule' }}
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.checkin-meta.outputs.marker_path }}
+          key: checkin-${{ github.repository }}-${{ steps.checkin-meta.outputs.date_key }}
+      - if: ${{ github.event_name != 'schedule' || steps.checkin-cache.outputs.cache-hit != 'true' }}
+        run: npm ci
+      - if: ${{ github.event_name != 'schedule' || steps.checkin-cache.outputs.cache-hit != 'true' }}
+        run: npm run main
         env:
-          GLADOS: ${{ secrets.GLADOS }}
-          NOTIFY: ${{ secrets.NOTIFY }}
+          GLADOS_COOKIE: ${{ secrets.GLADOS_COOKIE }}
+          CHECKIN_TIME: ${{ secrets.CHECKIN_TIME }}
+          CHECKIN_RANDOM: ${{ secrets.CHECKIN_RANDOM }}
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          WXPUSHER_TOKEN: ${{ secrets.WXPUSHER_TOKEN }}
+          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          QYWEIXIN_KEY: ${{ secrets.QYWEIXIN_KEY }}
+          CONSOLE_LOG: ${{ secrets.CONSOLE_LOG }}
+          CHECKIN_MARKER_PATH: ${{ steps.checkin-meta.outputs.marker_path }}
+      - id: checkin-marker
+        if: ${{ always() && github.event_name == 'schedule' && steps.checkin-cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: |
+          if [ -f "${{ steps.checkin-meta.outputs.marker_path }}" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: ${{ always() && github.event_name == 'schedule' && steps.checkin-cache.outputs.cache-hit != 'true' && steps.checkin-marker.outputs.exists == 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.checkin-meta.outputs.marker_path }}
+          key: checkin-${{ github.repository }}-${{ steps.checkin-meta.outputs.date_key }}

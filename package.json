@@ -1,4 +1,5 @@
 {
+  "name": "glados-auto-checkin",
   "type": "module",
   "scripts": {
     "main": "node main.js"
