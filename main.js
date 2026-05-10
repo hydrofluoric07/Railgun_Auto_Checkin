@@ -145,24 +145,25 @@ export const shouldRunCheckin = ({
   }
 }
 
-const glados = async () => {
+const railgunCheckin = async () => {
   const notice = []
-  if (!process.env.GLADOS_COOKIE) return
-  for (const cookie of String(process.env.GLADOS_COOKIE).split('\n')) {
+  if (!process.env.RAILGUN_COOKIE) return
+  for (const cookie of String(process.env.RAILGUN_COOKIE).split('\n')) {
     if (!cookie) continue
     try {
       const common = {
         'cookie': cookie,
-        'referer': 'https://glados.cloud/console/checkin',
-        'user-agent': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
+        'origin': 'https://railgun.info',
+        'referer': 'https://railgun.info/console/checkin',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36',
       }
-      const action = await fetch('https://glados.cloud/api/user/checkin', {
+      const action = await fetch('https://railgun.info/api/user/checkin', {
         method: 'POST',
         headers: { ...common, 'content-type': 'application/json' },
-        body: '{"token":"glados.cloud"}',
+        body: '{"token":"railgun.info"}',
       }).then((r) => r.json())
       if (action?.code) throw new Error(action?.message)
-      const status = await fetch('https://glados.cloud/api/user/status', {
+      const status = await fetch('https://railgun.info/api/user/status', {
         method: 'GET',
         headers: { ...common },
       }).then((r) => r.json())
@@ -295,9 +296,9 @@ export const main = async () => {
     console.log(checkin.reason)
     return
   }
-  const notice = await glados()
+  const notice = await railgunCheckin()
   if (!notice?.length) {
-    console.log('Skip checkin: GLADOS_COOKIE is not configured or no valid cookie entries were found.')
+    console.log('Skip checkin: RAILGUN_COOKIE is not configured or no valid cookie entries were found.')
     return
   }
   await writeCheckinMarker(checkin)

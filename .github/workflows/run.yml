@@ -1,4 +1,4 @@
-name: GLaDOS Auto Checkin
+name: Railgun Auto Checkin
 
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
       - if: ${{ github.event_name != 'schedule' || steps.checkin-cache.outputs.cache-hit != 'true' }}
         run: npm run main
         env:
-          GLADOS_COOKIE: ${{ secrets.GLADOS_COOKIE }}
+          RAILGUN_COOKIE: ${{ secrets.RAILGUN_COOKIE }}
           CHECKIN_TIME: ${{ secrets.CHECKIN_TIME }}
           CHECKIN_RANDOM: ${{ secrets.CHECKIN_RANDOM }}
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}

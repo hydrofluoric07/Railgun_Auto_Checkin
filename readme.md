@@ -1,13 +1,13 @@
-# GLaDOS Auto Checkin
+# Railgun Auto Checkin
 
-使用 GitHub Actions 自动完成 [GLaDOS][glados] 每日签到，并支持多账号、定时配置、随机签到时间和多渠道通知。
+使用 GitHub Actions 自动完成 [Railgun][railgun] 每日签到，并支持多账号、定时配置、随机签到时间和多渠道通知。
 
-本项目 fork 自 [integration-intelligent/checkin][upstream]，在原项目基础上修改 Repository secrets 配置，增加随机签到、适配Server酱通知，并规范相关文档。
+本项目 fork 自 [integration-intelligent/checkin][upstream]，在原项目基础上调整 Repository secrets 配置，增加随机签到、适配 Server 酱通知，并规范相关文档。
 
 ## 功能特性
 
 - 自动签到：默认每天北京时间 `09:00` 签到。
-- 多账号：`GLADOS_COOKIE` 支持多行 Cookie。
+- 多账号：`RAILGUN_COOKIE` 支持多行 Cookie。
 - 自定义时间：通过 `CHECKIN_TIME` 配置北京时间签到时间。
 - 随机时间：通过 `CHECKIN_RANDOM=true` 在配置时间前后 30 分钟内随机签到。
 - 通知渠道：支持 PushPlus、WxPusher、Server 酱、企业微信机器人和 Console 日志。
@@ -15,8 +15,8 @@
 ## 快速开始
 
 1. Fork 本仓库。
-1. 登录 [GLaDOS][glados]，获取账号 Cookie。
-1. 在仓库 `Settings` -> `Secrets and variables` -> `Actions` 中添加 Repository secret `GLADOS_COOKIE`。
+1. 登录 [Railgun][railgun]，获取账号 Cookie。
+1. 在仓库 `Settings` -> `Secrets and variables` -> `Actions` 中添加 Repository secret `RAILGUN_COOKIE`。
 1. 启用 GitHub Actions。
 
 启用后，Actions 会按 5 分钟粒度定时唤醒，由脚本判断是否到达当天签到时间。未配置 `CHECKIN_TIME` 时，默认按北京时间 `09:00` 签到。
@@ -27,7 +27,7 @@ GitHub Actions 的 `schedule` 可能延迟触发，因此如果没有在目标�
 
 | Secret | 必填 | 示例 | 说明 |
 | --- | --- | --- | --- |
-| `GLADOS_COOKIE` | 是 | `koa:sess=...` | GLaDOS Cookie。多个账号时每行填写一个 Cookie。 |
+| `RAILGUN_COOKIE` | 是 | `koa:sess=...` | Railgun Cookie。多个账号时每行填写一个 Cookie。 |
 | `CHECKIN_TIME` | 否 | `08:30` | 北京时间签到时间，格式为 `HH:mm`。默认 `09:00`。 |
 | `CHECKIN_RANDOM` | 否 | `true` | 设为 `true` 后，每天在 `CHECKIN_TIME` 前后 30 分钟内生成一个固定随机时间。 |
 
@@ -48,7 +48,7 @@ GitHub Actions 的 `schedule` 可能延迟触发，因此如果没有在目标�
 
 ## 旧配置迁移
 
-- `GLADOS` 改为 `GLADOS_COOKIE`。
+- `GLADOS_COOKIE` 改为 `RAILGUN_COOKIE`。
 - `NOTIFY=pushplus:{token}` 或 `NOTIFY={token}` 改为 `PUSHPLUS_TOKEN={token}`。
 - `NOTIFY=wxpusher:{token}:{uid}` 改为 `WXPUSHER_TOKEN={token}` 和 `WXPUSHER_UIDS={uid}`。
 - `NOTIFY=qyweixin:{token}` 改为 `QYWEIXIN_KEY={token}`。
@@ -66,12 +66,13 @@ npm run main
 本地调试时可设置环境变量，例如：
 
 ```bash
-GLADOS_COOKIE="koa:sess=..." CONSOLE_LOG="true" npm run main
+RAILGUN_COOKIE="koa:sess=..." CONSOLE_LOG="true" npm run main
 ```
+
 ---
 
-[glados]: https://github.com/glados-network/GLaDOS
 [pushplus]: https://www.pushplus.plus/
+[railgun]: https://railgun.info/
 [serverchan]: https://sct.ftqq.com/
 [upstream]: https://github.com/integration-intelligent/checkin
 [wxpusher]: https://wxpusher.zjiecode.com/
