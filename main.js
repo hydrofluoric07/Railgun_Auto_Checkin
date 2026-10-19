@@ -162,14 +162,15 @@ const railgunCheckin = async () => {
         headers: { ...common, 'content-type': 'application/json' },
         body: '{"token":"railgun.info"}',
       }).then((r) => r.json())
-      if (action?.code) throw new Error(action?.message)
+      const alreadyCheckedIn = action?.code === 1 && /already checked in/i.test(String(action?.message))
+      if (action?.code && !alreadyCheckedIn) throw new Error(action?.message)
       const status = await fetch('https://railgun.info/api/user/status', {
         method: 'GET',
         headers: { ...common },
       }).then((r) => r.json())
       if (status?.code) throw new Error(status?.message)
       notice.push(
-        'Checkin OK',
+        alreadyCheckedIn ? 'Checkin Already Done' : 'Checkin OK',
         `${action?.message}`,
         `Left Days ${Number(status?.data?.leftDays)}`
       )
