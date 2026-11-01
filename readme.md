@@ -10,7 +10,7 @@
 - 多账号：`RAILGUN_COOKIE` 支持多行 Cookie。
 - 自定义时间：通过 `CHECKIN_TIME` 配置北京时间签到时间。
 - 随机时间：通过 `CHECKIN_RANDOM=true` 在配置时间前后 30 分钟内随机签到。
-- 通知渠道：支持 PushPlus、WxPusher、Server 酱、企业微信机器人和 Console 日志。
+- 通知渠道：支持 PushPlus、WxPusher、Server 酱、自定义通知、企业微信机器人和 Console 日志。
 
 ## 快速开始
 
@@ -43,8 +43,12 @@ GitHub Actions 的 `schedule` 可能延迟触发，因此如果没有在目标�
 | [WxPusher][wxpusher] | `WXPUSHER_TOKEN` | `AT_xxxxxxxx` | WxPusher 应用 token。 |
 | [WxPusher][wxpusher] | `WXPUSHER_UIDS` | `UID_xxx,UID_yyy` | 接收用户 UID，支持逗号或换行分隔。 |
 | [Server 酱][serverchan] | `SERVERCHAN_SENDKEY` | `SCT...` | Server 酱 sendkey，支持普通和 `sctp...` 格式。 |
+| 自定义通知 | `CUSTOM_NOTICE_KEY` | `xxxxxxxx` | 自定义通知服务的 Bearer token。 |
+| 自定义通知 | `CUSTOM_NOTICE_URL`（Variable） | `https://example.com/api/messages` | 自定义通知接口地址，添加到 Actions Variables，不写入代码。 |
 | 企业微信机器人 | `QYWEIXIN_KEY` | `xxxxxxxx` | 企业微信机器人 webhook URL 中的 `key` 参数。 |
 | Console | `CONSOLE_LOG` | `true` | 设为 `true` 后将通知内容输出到 Actions 日志，适合调试。 |
+
+自定义通知需要同时配置 `CUSTOM_NOTICE_URL` 和 `CUSTOM_NOTICE_KEY`。脚本会向该地址发送 JSON 格式的 `POST` 请求，请求头为 `Authorization: Bearer ${CUSTOM_NOTICE_KEY}`，请求体包含 `title`、`content`、`tags`（固定为 `["railgun"]`）和 `level`（固定为 `info`）。`CUSTOM_NOTICE_URL` 请在 `Settings` -> `Secrets and variables` -> `Actions` -> `Variables` 中添加，避免后端地址出现在仓库代码中。
 
 ## 旧配置迁移
 

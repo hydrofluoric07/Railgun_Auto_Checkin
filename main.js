@@ -244,6 +244,25 @@ const sendServerChan = async (notice) => {
   })
 }
 
+const sendCustomNotice = async (notice) => {
+  const url = process.env.CUSTOM_NOTICE_URL
+  const key = process.env.CUSTOM_NOTICE_KEY
+  if (!url || !key) return
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${key}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: notice[0],
+      content: notice.slice(1).join('\n'),
+      tags: ['railgun'],
+      level: 'info',
+    }),
+  })
+}
+
 const isEnabled = (value) => String(value || '').trim() === 'true'
 
 const sendQyWeixin = async (notice) => {
@@ -287,6 +306,7 @@ export const notify = async (notice) => {
   await sendPushPlus(notice)
   await sendWxPusher(notice)
   await sendServerChan(notice)
+  await sendCustomNotice(notice)
   await sendQyWeixin(notice)
   await sendConsoleLog(notice)
 }

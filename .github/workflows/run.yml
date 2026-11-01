@@ -39,6 +39,8 @@ jobs:
           WXPUSHER_TOKEN: ${{ secrets.WXPUSHER_TOKEN }}
           WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          CUSTOM_NOTICE_KEY: ${{ secrets.CUSTOM_NOTICE_KEY }}
+          CUSTOM_NOTICE_URL: ${{ vars.CUSTOM_NOTICE_URL }}
           QYWEIXIN_KEY: ${{ secrets.QYWEIXIN_KEY }}
           CONSOLE_LOG: ${{ secrets.CONSOLE_LOG }}
           CHECKIN_MARKER_PATH: ${{ steps.checkin-meta.outputs.marker_path }}
